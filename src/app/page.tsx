@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import FileUpload from './components/FileUpload';
 import ResultsDisplay from './components/ResultsDisplay';
+import Navbar from './components/Navbar';
 import { ScoreResult } from '@/lib/scoring/types';
 
 export default function Home() {
@@ -45,13 +46,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-red-600">CVScorer</h1>
-          <p className="text-gray-600 mt-1">Get instant feedback on your resume</p>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navbar />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
