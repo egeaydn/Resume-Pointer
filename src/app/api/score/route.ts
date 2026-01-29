@@ -63,9 +63,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Additional security: check file name for suspicious patterns
-    const suspiciousPatterns = /../g; // Path traversal
-    if (suspiciousPatterns.test(file.name)) {
+    // Additional security: check file name for suspicious patterns (path traversal)
+    if (file.name.includes('..') || file.name.includes('/') || file.name.includes('\\')) {
       return NextResponse.json(
         { error: 'Invalid file name' },
         { status: 400 }
