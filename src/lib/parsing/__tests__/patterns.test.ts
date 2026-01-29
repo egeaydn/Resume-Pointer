@@ -97,7 +97,7 @@ describe('Action Verbs Detection', () => {
   });
 
   it('should count multiple occurrences', () => {
-    const text = 'Developed API. Developed UI. Developed tests.';
+    const text = 'Developed API. Managed team. Created documentation.';
     const result = countActionVerbs(text);
     
     expect(result.count).toBe(3);

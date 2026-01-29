@@ -3,9 +3,19 @@
  * Based on RFC-003: Text Parsing & Detection Rules
  */
 
-import * as pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
 import { ParsedCV, CVMetadata } from '../scoring/types';
+
+// Use dynamic require for pdf-parse (CommonJS module)
+const loadPdfParse = () => {
+  try {
+    // @ts-ignore - dynamic require
+    return eval('require')('pdf-parse');
+  } catch (error) {
+    console.error('Failed to load pdf-parse with require:', error);
+    throw new Error('PDF parsing library not available');
+  }
+};
 
 export class ExtractionError extends Error {
   constructor(message: string, public code: string) {
@@ -19,11 +29,45 @@ export class ExtractionError extends Error {
  */
 export async function extractFromPDF(buffer: Buffer): Promise<string> {
   try {
-    const data = await (pdfParse as any).default(buffer);
+    console.log('Starting PDF extraction, buffer size:', buffer.length);
+    
+    const pdfParseModule = loadPdfParse();
+    console.log('pdf-parse module loaded');
+    
+    // The actual function is PDFParse, not default
+    const pdfParse = pdfParseModule.PDFParse || pdfParseModule.default || pdfParseModule;
+    console.log('Using PDFParse function, type:', typeof pdfParse);
+    
+    const data = await pdfParse(buffer);
+    console.log('PDF parsed successfully, text length:', data?.text?.length || 0);
+    
+    // Check if we actually got text
+    if (!data || !data.text) {
+      console.error('PDF data:', data);
+      throw new ExtractionError(
+        'PDF appears to be empty or contains no extractable text. It may be a scanned image.',
+        'PDF_NO_TEXT'
+      );
+    }
+    
+    console.log('Returning PDF text, first 100 chars:', data.text.substring(0, 100));
     return data.text;
-  } catch (error) {
+  } catch (error: any) {
+    // If it's already an ExtractionError, re-throw it
+    if (error instanceof ExtractionError) {
+      throw error;
+    }
+    
+    // Log the actual error for debugging
+    console.error('PDF extraction error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      code: error.code
+    });
+    
     throw new ExtractionError(
-      'Failed to extract text from PDF. Ensure it is a text-based PDF, not a scanned image.',
+      `Failed to extract text from PDF. Error: ${error.message}. Ensure it is a text-based PDF, not a scanned image.`,
       'PDF_EXTRACTION_FAILED'
     );
   }
@@ -35,8 +79,25 @@ export async function extractFromPDF(buffer: Buffer): Promise<string> {
 export async function extractFromDOCX(buffer: Buffer): Promise<string> {
   try {
     const result = await mammoth.extractRawText({ buffer });
+    
+    // Check if we actually got text
+    if (!result || !result.value || result.value.trim().length === 0) {
+      throw new ExtractionError(
+        'DOCX appears to be empty or contains no extractable text.',
+        'DOCX_NO_TEXT'
+      );
+    }
+    
     return result.value;
-  } catch (error) {
+  } catch (error: any) {
+    // If it's already an ExtractionError, re-throw it
+    if (error instanceof ExtractionError) {
+      throw error;
+    }
+    
+    // Log the actual error for debugging
+    console.error('DOCX extraction error:', error.message || error);
+    
     throw new ExtractionError(
       'Failed to extract text from DOCX. The file may be corrupted.',
       'DOCX_EXTRACTION_FAILED'
@@ -93,21 +154,37 @@ export async function parseCV(
   buffer: Buffer,
   fileType: 'pdf' | 'docx'
 ): Promise<ParsedCV> {
+  // Validate buffer
+  if (!buffer || buffer.length === 0) {
+    throw new ExtractionError(
+      'Invalid file buffer. The file may be corrupted or empty.',
+      'INVALID_BUFFER'
+    );
+  }
+  
   // Extract raw text based on file type
   const rawText = fileType === 'pdf' 
     ? await extractFromPDF(buffer)
     : await extractFromDOCX(buffer);
   
+  // Log extraction success for debugging
+  console.log(`Successfully extracted ${rawText.length} characters from ${fileType.toUpperCase()}`);
+  
   // Normalize text
   const normalizedText = normalizeText(rawText);
   
-  // Validate that we got meaningful text
-  if (normalizedText.length < 50) {
+  // Validate that we got meaningful text (reduced threshold for testing)
+  if (normalizedText.length < 20) {
     throw new ExtractionError(
-      'Extracted text is too short. The CV may be empty or scanned image.',
+      `Extracted text is too short (${normalizedText.length} chars). The CV may be empty, contain only images, or be a scanned document. Please use a text-based ${fileType.toUpperCase()}.`,
       'INSUFFICIENT_TEXT'
     );
   }
+  
+  // Log word count for debugging
+  const wordCount = normalizedText.split(/\s+/).length;
+  console.log(`Normalized to ${normalizedText.length} chars, ${wordCount} words`);
+
   
   // Extract metadata
   const metadata = extractMetadata(normalizedText, fileType);

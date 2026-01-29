@@ -378,19 +378,20 @@ export function countActionVerbs(text: string): {
   found: string[];
 } {
   const lowerText = text.toLowerCase();
-  const found: string[] = [];
+  const foundSet = new Set<string>();
   
   ACTION_VERBS.forEach(verb => {
-    const regex = new RegExp(`\\b${verb}\\b`, 'gi');
-    const matches = lowerText.match(regex);
-    if (matches) {
-      found.push(...matches.map(m => m.toLowerCase()));
+    const regex = new RegExp(`\\b${verb}\\b`, 'i');
+    if (regex.test(lowerText)) {
+      foundSet.add(verb);
     }
   });
   
+  const found = Array.from(foundSet);
+  
   return {
     count: found.length,
-    found: [...new Set(found)], // Remove duplicates
+    found,
   };
 }
 
@@ -522,8 +523,8 @@ export function extractYearsOfExperience(text: string): {
   const experienceStatements: string[] = [];
   let totalYears = 0;
   
-  // Pattern: "X years of experience" or "X+ years"
-  const yearPattern = /(\d+)\+?\s*(years?|yrs?)\s*(of\s*)?(experience|exp)/gi;
+  // Pattern: "X years of experience" or "X+ years" or "X years" (more flexible)
+  const yearPattern = /(\d+)\+?\s*(?:years?|yrs?)(?:\s+of\s+(?:experience|exp(?:erience)?))?\b/gi;
   const matches = text.matchAll(yearPattern);
   
   for (const match of matches) {

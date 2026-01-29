@@ -9,25 +9,23 @@ import { calculateScore } from '@/lib/scoring/calculator';
 import { FILE_CONSTRAINTS } from '@/lib/scoring/constants';
 
 export const runtime = 'nodejs';
-export const maxDuration = 10; // 10 seconds max
+export const maxDuration = 10; 
 
-// Simple in-memory rate limiting (resets on server restart)
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT = 10; // requests per hour
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
+const RATE_LIMIT = 10; 
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; 
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
   const userLimit = requestCounts.get(ip);
 
   if (!userLimit || now > userLimit.resetTime) {
-    // Reset or initialize
     requestCounts.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
     return true;
   }
 
   if (userLimit.count >= RATE_LIMIT) {
-    return false; // Rate limit exceeded
+    return false; // Rate limit exceeded here could add logging
   }
 
   userLimit.count++;
@@ -36,12 +34,10 @@ function checkRateLimit(ip: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get client IP for rate limiting
     const ip = request.headers.get('x-forwarded-for') || 
                request.headers.get('x-real-ip') || 
                'unknown';
 
-    // Check rate limit
     if (!checkRateLimit(ip)) {
       return NextResponse.json(
         { 
@@ -52,7 +48,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Parse form data
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     
@@ -71,7 +66,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Validate file
     const validation = validateFile(
       { 
         size: file.size, 
@@ -89,25 +83,20 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Determine file type
     const fileType = file.name.toLowerCase().endsWith('.pdf') ? 'pdf' : 'docx';
     
-    // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    // Extract and parse CV
     const parsedCV = await parseCV(buffer, fileType);
     
-    // Calculate score
     const scoreResult = calculateScore(parsedCV);
     
-    // Return results
     return NextResponse.json({
       success: true,
       result: scoreResult,
       metadata: {
-        fileName: file.name.replace(/[^\w\s.-]/g, ''), // Sanitize filename in response
+        fileName: file.name.replace(/[^\w\s.-]/g, ''),
         fileSize: file.size,
         fileType: fileType,
         processedAt: new Date().toISOString(),
@@ -117,7 +106,6 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error processing CV:', error);
     
-    // Handle specific error types
     if (error.name === 'ExtractionError') {
       return NextResponse.json(
         { 
@@ -128,7 +116,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Generic error - don't leak sensitive information
     return NextResponse.json(
       { 
         error: 'Failed to process CV. Please ensure the file is a valid PDF or DOCX.',
@@ -139,7 +126,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Handle OPTIONS for CORS (if needed)
 export async function OPTIONS(request: NextRequest) {
   return new NextResponse(null, {
     status: 200,

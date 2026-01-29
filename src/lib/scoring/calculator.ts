@@ -34,8 +34,8 @@ import {
  * Main scoring function - evaluates a CV and returns comprehensive results
  */
 export function calculateScore(cv: ParsedCV): ScoreResult {
-  // First, detect all sections in the CV
-  const sections = detectSections(cv);
+  // First, detect all sections in the CV (only if not already provided)
+  const sections = cv.sections || detectSections(cv);
   const cvWithSections = { ...cv, sections };
   
   // Calculate scores for each category

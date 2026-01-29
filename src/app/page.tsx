@@ -1,3 +1,5 @@
+//created by Ege Aydın - https://github.com/egeaydn
+
 'use client';
 
 import { useState } from 'react';
@@ -51,10 +53,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
       <Navbar />
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
         {isProcessing ? (
           <LoadingSpinner />
@@ -81,7 +81,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* Features */}
             <div className="max-w-4xl mx-auto mt-16 grid md:grid-cols-3 gap-8">
               <FeatureCard
                 icon="⚡"
@@ -100,7 +99,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Tips Section */}
             <div className="max-w-4xl mx-auto mt-16 bg-linear-to-br from-red-50 to-white rounded-lg shadow-md p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                 💡 Quick Tips for a High Score
