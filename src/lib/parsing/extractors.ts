@@ -95,16 +95,18 @@ export async function extractFromDOCX(buffer: Buffer): Promise<string> {
  */
 export function normalizeText(text: string): string {
   return text
-    // Remove excessive whitespace
-    .replace(/\s+/g, ' ')
-    // Remove control characters
-    .replace(/[\x00-\x1F\x7F]/g, '')
-    // Normalize line breaks
+    // Normalize line breaks first (before removing whitespace)
     .replace(/\r\n/g, '\n')
     .replace(/\r/g, '\n')
+    // Remove control characters
+    .replace(/[\x00-\x1F\x7F]/g, '')
     // Remove multiple consecutive line breaks
     .replace(/\n{3,}/g, '\n\n')
-    // Trim whitespace
+    // Remove excessive whitespace on each line (but keep newlines)
+    .split('\n')
+    .map(line => line.replace(/\s+/g, ' ').trim())
+    .join('\n')
+    // Trim whitespace from start and end
     .trim();
 }
 

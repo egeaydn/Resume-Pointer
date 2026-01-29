@@ -1,79 +1,102 @@
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+
+export const metadata = {
+  title: 'About - CVScorer',
+  description: 'Learn about CVScorer, a free rule-based resume analysis tool',
+};
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
       <Navbar />
-      
-      <main className="container mx-auto px-4 py-12 max-w-4xl">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">About CVScorer</h1>
-        
-        <div className="bg-white rounded-lg shadow-md p-8 space-y-6">
-          <section>
-            <h2 className="text-2xl font-semibold text-red-600 mb-4">What is CVScorer?</h2>
-            <p className="text-gray-700 leading-relaxed">
-              CVScorer is a free, privacy-first tool that helps job seekers improve their resumes. 
-              Using a transparent, rule-based scoring system, we analyze your CV across 5 key categories 
-              and provide actionable feedback to help you stand out to recruiters and ATS systems.
-            </p>
-          </section>
+      <main className="min-h-screen bg-white">
+        <div className="container mx-auto px-6 py-12">
+          <article className="max-w-3xl mx-auto">
+            <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
+              About CVScorer
+            </h1>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-red-600 mb-4">How It Works</h2>
-            <ol className="list-decimal list-inside space-y-3 text-gray-700">
-              <li><strong>Upload Your CV:</strong> Drag and drop your PDF or DOCX file</li>
-              <li><strong>Instant Analysis:</strong> Our system extracts text and evaluates it against proven criteria</li>
-              <li><strong>Get Your Score:</strong> Receive a 0-100 score with detailed breakdown</li>
-              <li><strong>Implement Feedback:</strong> Use our specific suggestions to improve your CV</li>
-            </ol>
-          </section>
+            <div className="space-y-8 text-gray-700 leading-relaxed">
+              <p className="text-xl text-center text-gray-600 mb-12">
+                CVScorer is a free, rule-based resume analysis tool that helps job seekers improve their CVs before applying.
+              </p>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-red-600 mb-4">Scoring Categories</h2>
-            <ul className="space-y-3 text-gray-700">
-              <li><strong>CV Structure (15 pts):</strong> Checks for essential sections like Contact, Experience, Education, Skills</li>
-              <li><strong>Technical Skills (20 pts):</strong> Evaluates the breadth of your technical competencies</li>
-              <li><strong>Work Experience (30 pts):</strong> Analyzes use of action verbs, bullet points, and quantified achievements</li>
-              <li><strong>Education (15 pts):</strong> Verifies educational background and qualifications</li>
-              <li><strong>Formatting (20 pts):</strong> Assesses overall readability, length, and professional appearance</li>
-            </ul>
-          </section>
+              <section>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                  How It Works
+                </h2>
+                <ul className="space-y-3 text-base">
+                  <li>• Upload your CV (PDF or DOCX)</li>
+                  <li>• Instant analysis using proven criteria</li>
+                  <li>• Get a 0-100 score with detailed feedback</li>
+                  <li>• Make improvements and re-test</li>
+                </ul>
+              </section>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-red-600 mb-4">Why Rule-Based?</h2>
-            <p className="text-gray-700 leading-relaxed">
-              Unlike AI-powered tools that use opaque "black box" algorithms, CVScorer uses transparent, 
-              deterministic rules. You can understand exactly why you received each point and what to improve. 
-              Our criteria are based on industry best practices and common ATS screening patterns.
-            </p>
-          </section>
+              <section>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Why Rule-Based?
+                </h2>
+                <p>
+                  We use transparent, deterministic rules instead of AI to ensure consistency and explainability. 
+                  You&apos;ll always understand exactly why you got your score.
+                </p>
+                <p className="mt-4">
+                  Our scoring system evaluates your CV across five key dimensions:
+                </p>
+                <ul className="space-y-2 mt-2 text-base">
+                  <li>• <strong>CV Structure & Sections (15 points)</strong> - Essential sections like contact, experience, education</li>
+                  <li>• <strong>Technical Skills (20 points)</strong> - Relevant keywords and domain expertise</li>
+                  <li>• <strong>Work Experience (30 points)</strong> - Action verbs, quantified achievements, bullet points</li>
+                  <li>• <strong>Education (15 points)</strong> - Academic background and certifications</li>
+                  <li>• <strong>Formatting & Readability (20 points)</strong> - Length, structure, professional presentation</li>
+                </ul>
+              </section>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-red-600 mb-4">Privacy Commitment</h2>
-            <p className="text-gray-700 leading-relaxed">
-              Your privacy matters. CVScorer processes your CV entirely in-memory and never stores, 
-              logs, or shares your data. Once you close the page, your information is completely gone. 
-              No accounts, no tracking, no data collection.
-            </p>
-          </section>
+              <section>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Privacy
+                </h2>
+                <p>
+                  Your CV is processed in-memory and never stored. We don&apos;t track or save any of your personal information. 
+                  All analysis happens locally in your browser session, and your data is immediately discarded after providing feedback.
+                </p>
+              </section>
 
-          <section>
-            <h2 className="text-2xl font-semibold text-red-600 mb-4">Limitations</h2>
-            <ul className="list-disc list-inside space-y-2 text-gray-700">
-              <li>Works best with English-language CVs</li>
-              <li>Requires text-based PDFs (not scanned images)</li>
-              <li>Cannot replace human judgment or industry-specific expertise</li>
-              <li>Serves as a "first pass" evaluation tool</li>
-            </ul>
-          </section>
+              <section>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                  Features
+                </h2>
+                <ul className="space-y-2 text-base">
+                  <li>✓ Instant analysis (2-3 seconds)</li>
+                  <li>✓ 100% free, no sign-up required</li>
+                  <li>✓ Privacy-first approach</li>
+                  <li>✓ Detailed actionable feedback</li>
+                  <li>✓ Support for PDF and DOCX formats</li>
+                  <li>✓ 400+ technical skills recognized</li>
+                  <li>✓ 150+ professional action verbs detected</li>
+                </ul>
+              </section>
+
+              <section className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+                  About This Project
+                </h2>
+                <p>
+                  CVScorer was built as a portfolio project to demonstrate full-stack development skills using modern web technologies. 
+                  It combines practical utility with technical excellence, showcasing expertise in Next.js, TypeScript, AI-assisted 
+                  development, and software engineering best practices.
+                </p>
+                <p className="mt-4 text-sm">
+                  <strong>Tech Stack:</strong> Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, Jest, React Testing Library
+                </p>
+              </section>
+            </div>
+          </article>
         </div>
       </main>
-
-      <footer className="bg-white border-t border-gray-200 mt-20">
-        <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-          <p>CVScorer - Rule-based CV evaluation tool</p>
-        </div>
-      </footer>
-    </div>
+      <Footer />
+    </>
   );
 }

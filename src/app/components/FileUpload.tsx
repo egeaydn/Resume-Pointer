@@ -95,6 +95,15 @@ export default function FileUpload({ onFileSelect, isProcessing }: FileUploadPro
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={handleClick}
+        role="button"
+        tabIndex={0}
+        aria-label="Upload CV file"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
         className={`
           border-2 border-dashed rounded-lg p-12 text-center cursor-pointer
           transition-all duration-200
@@ -112,28 +121,31 @@ export default function FileUpload({ onFileSelect, isProcessing }: FileUploadPro
           onChange={handleFileInput}
           className="hidden"
           disabled={isProcessing}
+          aria-label="Choose CV file"
         />
         
         <div className="space-y-4">
-          <div className="text-6xl">📄</div>
+          <div className="text-6xl" role="img" aria-label="Document icon">
+            📄
+          </div>
           
           <div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {isProcessing ? 'Processing your CV...' : 'Upload your CV'}
+              {isProcessing ? 'Processing your CV...' : 'Drop your CV here'}
             </h3>
             <p className="text-gray-600">
-              Drag and drop your file here, or click to browse
+              or click to upload
             </p>
           </div>
           
           <div className="text-sm text-gray-500">
-            Supported formats: PDF, DOCX (Max 5MB)
+            Supports: PDF, DOCX (Max 5MB)
           </div>
         </div>
       </div>
 
       {error && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
           <p className="text-red-800 text-sm">❌ {error}</p>
         </div>
       )}

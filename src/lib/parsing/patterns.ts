@@ -226,31 +226,31 @@ export const ACTION_VERBS = [
 // ============================================================================
 
 export const SECTION_PATTERNS = {
-  contact: /^(contact|personal\s+information|personal\s+details|get\s+in\s+touch|contact\s+info|contact\s+details)/im,
+  contact: /^\s*(contact|personal\s+information|personal\s+details|get\s+in\s+touch|contact\s+info|contact\s+details)\s*$/im,
   
-  summary: /^(professional\s+summary|summary|profile|about\s+me|objective|career\s+objective|career\s+summary|executive\s+summary|personal\s+statement|professional\s+profile)/im,
+  summary: /^\s*(professional\s+summary|summary|profile|about\s+me|objective|career\s+objective|career\s+summary|executive\s+summary|personal\s+statement|professional\s+profile)\s*$/im,
   
-  experience: /^(work\s+experience|professional\s+experience|experience|employment\s+history|career\s+history|work\s+history|relevant\s+experience|professional\s+background)/im,
+  experience: /^\s*(work\s+experience|professional\s+experience|experience|employment\s+history|career\s+history|work\s+history|relevant\s+experience|professional\s+background|projects)\s*$/im,
   
-  education: /^(education|academic\s+background|qualifications|academic\s+qualifications|educational\s+background)/im,
+  education: /^\s*(education|academic\s+background|qualifications|academic\s+qualifications|educational\s+background)\s*$/im,
   
-  skills: /^(skills|technical\s+skills|core\s+competencies|expertise|technologies|technical\s+expertise|key\s+skills|professional\s+skills|core\s+skills|competencies)/im,
+  skills: /^\s*(skills|technical\s+skills|core\s+competencies|expertise|technologies|technical\s+expertise|key\s+skills|professional\s+skills|core\s+skills|competencies)\s*$/im,
   
-  projects: /^(projects|personal\s+projects|portfolio|key\s+projects|notable\s+projects|side\s+projects|open\s+source|contributions)/im,
+  projects: /^\s*(projects|personal\s+projects|portfolio|key\s+projects|notable\s+projects|side\s+projects|open\s+source|contributions)\s*$/im,
   
-  certifications: /^(certifications|certificates|licenses|credentials|professional\s+certifications|professional\s+licenses)/im,
+  certifications: /^\s*(certifications|certificates|licenses|credentials|professional\s+certifications|professional\s+licenses)\s*$/im,
   
-  awards: /^(awards|honors|achievements|recognition|accomplishments|honors\s+and\s+awards)/im,
+  awards: /^\s*(awards|honors|achievements|recognition|accomplishments|honors\s+and\s+awards)\s*$/im,
   
-  languages: /^(languages|language\s+skills|language\s+proficiency|spoken\s+languages)/im,
+  languages: /^\s*(languages|language\s+skills|language\s+proficiency|spoken\s+languages)\s*$/im,
   
-  volunteer: /^(volunteer|volunteering|community\s+service|volunteer\s+work|volunteer\s+experience)/im,
+  volunteer: /^\s*(volunteer|volunteering|community\s+service|volunteer\s+work|volunteer\s+experience)\s*$/im,
   
-  publications: /^(publications|papers|articles|research|research\s+publications|published\s+work)/im,
+  publications: /^\s*(publications|papers|articles|research|research\s+publications|published\s+work)\s*$/im,
   
-  interests: /^(interests|hobbies|personal\s+interests|hobbies\s+and\s+interests)/im,
+  interests: /^\s*(interests|hobbies|personal\s+interests|hobbies\s+and\s+interests)\s*$/im,
   
-  references: /^(references|professional\s+references|references\s+available)/im,
+  references: /^\s*(references|professional\s+references|references\s+available)\s*$/im,
 };
 
 // ============================================================================
@@ -268,8 +268,8 @@ export const URL_PATTERN = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9-]+\.(c
 
 // Social media patterns
 export const SOCIAL_PATTERNS = {
-  linkedin: /linkedin\.com\/in\/[a-zA-Z0-9-]+/gi,
-  github: /github\.com\/[a-zA-Z0-9-]+/gi,
+  linkedin: /(linkedin\.com\/in\/[a-zA-Z0-9-]+)|(linkedin\s*◇)|(linkedin\s*profile)|(linkedin\s*:)/gi,
+  github: /(github\.com\/[a-zA-Z0-9-]+)|(github\s*◇)|(github\s*profile)|(github\s*:)/gi,
   gitlab: /gitlab\.com\/[a-zA-Z0-9-]+/gi,
   portfolio: /(portfolio|website|personal\s+site)/gi,
   twitter: /(twitter\.com|x\.com)\/[a-zA-Z0-9_]+/gi,

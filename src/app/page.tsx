@@ -1,5 +1,3 @@
-//created by Ege Aydın - https://github.com/egeaydn
-
 'use client';
 
 import { useState } from 'react';
@@ -7,6 +5,7 @@ import FileUpload from './components/FileUpload';
 import ResultsDisplay from './components/ResultsDisplay';
 import LoadingSpinner from './components/LoadingSpinner';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import { ScoreResult } from '@/lib/scoring/types';
 
 export default function Home() {
@@ -31,7 +30,6 @@ export default function Home() {
       const data = await response.json();
 
       if (!response.ok) {
-        // Special handling for rate limit
         if (response.status === 429) {
           throw new Error('⏱️ Rate limit reached. Please wait an hour before trying again.');
         }
@@ -52,21 +50,20 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="flex-grow container mx-auto px-4 py-12">
         {isProcessing ? (
           <LoadingSpinner />
         ) : !result ? (
           <div className="space-y-8">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Improve Your CV in Minutes
-              </h2>
-              <p className="text-lg text-gray-600">
-                Upload your resume and get a detailed score with actionable suggestions.
-                Our rule-based system analyzes structure, content, and formatting.
+              <h1 className="text-5xl font-bold text-gray-900 mb-4">
+                Get Your CV Score
+              </h1>
+              <p className="text-xl text-gray-600">
+                Upload your resume for instant feedback
               </p>
             </div>
 
@@ -76,33 +73,34 @@ export default function Home() {
             />
 
             {error && (
-              <div className="max-w-2xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="max-w-2xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
                 <p className="text-red-800">❌ {error}</p>
               </div>
             )}
 
-            <div className="max-w-4xl mx-auto mt-16 grid md:grid-cols-3 gap-8">
-              <FeatureCard
-                icon="⚡"
-                title="Instant Results"
-                description="Get your score in seconds, not days"
-              />
-              <FeatureCard
-                icon="🔒"
-                title="100% Private"
-                description="Your CV is never stored or shared"
-              />
-              <FeatureCard
-                icon="📊"
-                title="Detailed Feedback"
-                description="Know exactly what to improve"
-              />
+            <div className="max-w-4xl mx-auto mt-12 grid md:grid-cols-4 gap-6 text-center text-sm text-gray-600">
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-green-600 text-lg">✓</span>
+                <span>Instant analysis</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-green-600 text-lg">✓</span>
+                <span>Privacy-first</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-green-600 text-lg">✓</span>
+                <span>No sign-up needed</span>
+              </div>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-green-600 text-lg">✓</span>
+                <span>100% free</span>
+              </div>
             </div>
 
-            <div className="max-w-4xl mx-auto mt-16 bg-linear-to-br from-red-50 to-white rounded-lg shadow-md p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            <div className="max-w-4xl mx-auto mt-16 bg-gradient-to-br from-red-50 to-white rounded-lg shadow-md p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                 💡 Quick Tips for a High Score
-              </h3>
+              </h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <TipCard
                   title="Structure Matters"
@@ -144,12 +142,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-20">
-        <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-          <p>CVScorer - Rule-based CV evaluation tool</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
@@ -157,7 +150,9 @@ export default function Home() {
 function FeatureCard({ icon, title, description }: { icon: string; title: string; description: string }) {
   return (
     <div className="text-center p-6">
-      <div className="text-5xl mb-4">{icon}</div>
+      <div className="text-5xl mb-4" role="img" aria-label={title}>
+        {icon}
+      </div>
       <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
       <p className="text-gray-600">{description}</p>
     </div>
@@ -168,10 +163,10 @@ function TipCard({ title, tips }: { title: string; tips: string[] }) {
   return (
     <div className="bg-white rounded-lg p-6 border border-red-100">
       <h4 className="font-semibold text-gray-900 mb-3">{title}</h4>
-      <ul className="space-y-2">
+      <ul className="space-y-2" role="list">
         {tips.map((tip, index) => (
           <li key={index} className="text-sm text-gray-700 flex items-start">
-            <span className="text-red-600 mr-2 shrink-0">✓</span>
+            <span className="text-red-600 mr-2 shrink-0" aria-hidden="true">✓</span>
             <span>{tip}</span>
           </li>
         ))}
