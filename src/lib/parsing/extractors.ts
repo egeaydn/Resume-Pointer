@@ -6,17 +6,6 @@
 import mammoth from 'mammoth';
 import { ParsedCV, CVMetadata } from '../scoring/types';
 
-// Use dynamic require for pdf-parse (CommonJS module)
-const loadPdfParse = () => {
-  try {
-    // @ts-ignore - dynamic require
-    return eval('require')('pdf-parse');
-  } catch (error) {
-    console.error('Failed to load pdf-parse with require:', error);
-    throw new Error('PDF parsing library not available');
-  }
-};
-
 export class ExtractionError extends Error {
   constructor(message: string, public code: string) {
     super(message);
@@ -31,12 +20,8 @@ export async function extractFromPDF(buffer: Buffer): Promise<string> {
   try {
     console.log('Starting PDF extraction, buffer size:', buffer.length);
     
-    const pdfParseModule = loadPdfParse();
-    console.log('pdf-parse module loaded');
-    
-    // The actual function is PDFParse, not default
-    const pdfParse = pdfParseModule.PDFParse || pdfParseModule.default || pdfParseModule;
-    console.log('Using PDFParse function, type:', typeof pdfParse);
+    // Lazy load pdf-parse to avoid loading test files on module import
+    const pdfParse = require('pdf-parse');
     
     const data = await pdfParse(buffer);
     console.log('PDF parsed successfully, text length:', data?.text?.length || 0);
