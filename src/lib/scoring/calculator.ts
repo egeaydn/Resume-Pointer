@@ -25,6 +25,9 @@ import {
   countQuantifications,
   hasSectionByName,
   getSectionContent,
+  analyzeContactInfo,
+  extractYearsOfExperience,
+  detectSocialProfiles,
 } from '../parsing/patterns';
 
 /**
@@ -376,17 +379,17 @@ function scoreFormatting(cv: ParsedCV): CategoryScore {
   let score = 0;
   const maxScore = SCORING_WEIGHTS.formatting;
   
-  // 1. Check word count (5 points)
+  // 1. Check word count (4 points)
   const { wordCount } = cv.metadata;
   if (wordCount >= 300 && wordCount <= 800) {
-    score += 5;
+    score += 4;
     feedback.push({
       type: 'success',
       message: `Good length: ${wordCount} words`,
       icon: '✅',
     });
   } else if (wordCount >= 200 && wordCount <= 1000) {
-    score += 3;
+    score += 2;
     feedback.push({
       type: 'warning',
       message: `${wordCount} words - aim for 300-800 for optimal length`,
@@ -408,33 +411,68 @@ function scoreFormatting(cv: ParsedCV): CategoryScore {
     });
   }
   
-  // 2. Check for contact information (5 points)
-  if (cv.metadata.hasContactInfo) {
-    score += 5;
+  // 2. Enhanced contact information analysis (8 points)
+  const contactAnalysis = analyzeContactInfo(cv.normalizedText);
+  
+  if (contactAnalysis.hasEmail) {
+    score += 2;
     feedback.push({
       type: 'success',
-      message: 'Contact information found',
+      message: 'Email address found',
       icon: '✅',
     });
   } else {
     feedback.push({
       type: 'error',
-      message: 'Add email or phone number',
+      message: 'Add email address',
       icon: '❌',
     });
   }
   
-  // 3. Check page count estimation (5 points)
+  if (contactAnalysis.hasPhone) {
+    score += 1;
+    feedback.push({
+      type: 'success',
+      message: 'Phone number included',
+      icon: '✅',
+    });
+  }
+  
+  if (contactAnalysis.hasLinkedIn) {
+    score += 3;
+    feedback.push({
+      type: 'success',
+      message: 'LinkedIn profile included - excellent for networking!',
+      icon: '✅',
+    });
+  } else {
+    feedback.push({
+      type: 'warning',
+      message: 'Add LinkedIn profile to boost visibility',
+      icon: '⚠️',
+    });
+  }
+  
+  if (contactAnalysis.hasGitHub) {
+    score += 2;
+    feedback.push({
+      type: 'success',
+      message: 'GitHub profile included - great for tech roles!',
+      icon: '✅',
+    });
+  }
+  
+  // 3. Check page count estimation (4 points)
   const { estimatedPageCount } = cv.metadata;
   if (estimatedPageCount <= 2) {
-    score += 5;
+    score += 4;
     feedback.push({
       type: 'success',
       message: `Concise length (~${estimatedPageCount} page${estimatedPageCount > 1 ? 's' : ''})`,
       icon: '✅',
     });
   } else if (estimatedPageCount === 3) {
-    score += 3;
+    score += 2;
     feedback.push({
       type: 'warning',
       message: `Consider condensing to 2 pages (currently ~${estimatedPageCount} pages)`,
@@ -449,10 +487,10 @@ function scoreFormatting(cv: ParsedCV): CategoryScore {
     });
   }
   
-  // 4. Check for proper structure (5 points)
+  // 4. Check for proper structure (4 points)
   const hasMultipleSections = cv.sections.length >= 3;
   if (hasMultipleSections) {
-    score += 5;
+    score += 4;
     feedback.push({
       type: 'success',
       message: `Well-organized with ${cv.sections.length} distinct sections`,

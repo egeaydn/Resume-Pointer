@@ -11,8 +11,47 @@ import { FILE_CONSTRAINTS } from '@/lib/scoring/constants';
 export const runtime = 'nodejs';
 export const maxDuration = 10; // 10 seconds max
 
+// Simple in-memory rate limiting (resets on server restart)
+const requestCounts = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT = 10; // requests per hour
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour in milliseconds
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const userLimit = requestCounts.get(ip);
+
+  if (!userLimit || now > userLimit.resetTime) {
+    // Reset or initialize
+    requestCounts.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+
+  if (userLimit.count >= RATE_LIMIT) {
+    return false; // Rate limit exceeded
+  }
+
+  userLimit.count++;
+  return true;
+}
+
 export async function POST(request: NextRequest) {
   try {
+    // Get client IP for rate limiting
+    const ip = request.headers.get('x-forwarded-for') || 
+               request.headers.get('x-real-ip') || 
+               'unknown';
+
+    // Check rate limit
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { 
+          error: 'Rate limit exceeded. Please try again later.',
+          details: `Maximum ${RATE_LIMIT} requests per hour allowed.`
+        },
+        { status: 429 }
+      );
+    }
+
     // Parse form data
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -20,6 +59,15 @@ export async function POST(request: NextRequest) {
     if (!file) {
       return NextResponse.json(
         { error: 'No file provided' },
+        { status: 400 }
+      );
+    }
+
+    // Additional security: check file name for suspicious patterns
+    const suspiciousPatterns = /../g; // Path traversal
+    if (suspiciousPatterns.test(file.name)) {
+      return NextResponse.json(
+        { error: 'Invalid file name' },
         { status: 400 }
       );
     }
@@ -60,7 +108,7 @@ export async function POST(request: NextRequest) {
       success: true,
       result: scoreResult,
       metadata: {
-        fileName: file.name,
+        fileName: file.name.replace(/[^\w\s.-]/g, ''), // Sanitize filename in response
         fileSize: file.size,
         fileType: fileType,
         processedAt: new Date().toISOString(),
@@ -81,11 +129,11 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Generic error
+    // Generic error - don't leak sensitive information
     return NextResponse.json(
       { 
         error: 'Failed to process CV. Please ensure the file is a valid PDF or DOCX.',
-        details: error.message 
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
       },
       { status: 500 }
     );

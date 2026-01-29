@@ -2,6 +2,7 @@
 
 import { ScoreResult, CategoryScore } from '@/lib/scoring/types';
 import { CATEGORY_NAMES, SCORE_RANGES } from '@/lib/scoring/constants';
+import ScoreAnimation from './ScoreAnimation';
 
 interface ResultsDisplayProps {
   result: ScoreResult;
@@ -22,13 +23,12 @@ export default function ResultsDisplay({ result, onReset }: ResultsDisplayProps)
       {/* Total Score Card */}
       <div className="bg-white rounded-lg shadow-lg p-8 text-center border-t-4 border-red-600">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Your CV Score</h2>
-        <div className="text-7xl font-bold mb-2" style={{ color: scoreRange?.color }}>
-          {totalScore}
-          <span className="text-3xl text-gray-500">/100</span>
-        </div>
-        <div className="text-xl font-semibold mb-4" style={{ color: scoreRange?.color }}>
-          {scoreRange?.label}
-        </div>
+        <ScoreAnimation 
+          targetScore={totalScore} 
+          maxScore={100}
+          color={scoreRange?.color || '#DC2626'}
+          label={scoreRange?.label || ''}
+        />
         <p className="text-gray-700 max-w-2xl mx-auto">{overallFeedback}</p>
       </div>
 
@@ -59,7 +59,13 @@ export default function ResultsDisplay({ result, onReset }: ResultsDisplayProps)
       )}
 
       {/* Upload Another Button */}
-      <div className="text-center">
+      <div className="text-center space-x-4">
+        <button
+          onClick={() => window.print()}
+          className="px-8 py-3 bg-white text-red-600 font-semibold rounded-lg border-2 border-red-600 hover:bg-red-50 transition-colors"
+        >
+          📄 Print Results
+        </button>
         <button
           onClick={onReset}
           className="px-8 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"

@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+/* Print styles for CV results */
+@media print {
+  /* Hide navigation and unnecessary elements */
+  nav, footer, button {
+    display: none !important;
+  }
+  
+  /* Ensure proper page breaks */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Optimize for print */
+  body {
+    background: white !important;
+  }
+  
+  /* Ensure content fits on page */
+  .container {
+    max-width: 100% !important;
+  }
+}
