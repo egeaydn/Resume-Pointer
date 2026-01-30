@@ -2,7 +2,7 @@
 
 import { ScoreResult } from '@/lib/scoring/types';
 import Button from '../common/Button';
-import { ScoreAnimation } from '../ScoreAnimation';
+import ScoreAnimation from '../ScoreAnimation';
 
 interface ScoreCardProps {
   result: ScoreResult;
