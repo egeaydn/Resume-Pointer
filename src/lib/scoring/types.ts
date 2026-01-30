@@ -1,6 +1,7 @@
 /**
  * Scoring system types for CV evaluation
  * Based on RFC-002: Scoring Rubric & Criteria
+ * Updated for RFC-005: Backend Architecture
  */
 
 export type ScoreCategory = 
@@ -23,20 +24,71 @@ export interface FeedbackItem {
   icon: '✅' | '❌' | '⚠️';
 }
 
+/**
+ * RFC-005 compliant score result format
+ */
 export interface ScoreResult {
   totalScore: number;
+  grade?: string;
+  message?: string;
+  breakdown: ScoreBreakdown;
+  recommendations?: Recommendation[];
+  metadata?: ResultMetadata;
+  // Legacy fields (backward compatibility)
+  maxScore?: number;
+  categoryScores?: CategoryScore[];
+  overallFeedback?: string;
+  suggestions?: string[];
+  timestamp?: number;
+}
+
+export interface ScoreBreakdown {
+  structure: CategoryResult;
+  technicalSkills: CategoryResult;
+  workExperience: CategoryResult;
+  education: CategoryResult;
+  formatting: CategoryResult;
+}
+
+export interface CategoryResult {
+  score: number;
   maxScore: number;
-  categoryScores: CategoryScore[];
-  overallFeedback: string;
-  suggestions: string[];
-  timestamp: number;
+  details: CategoryDetail[];
+}
+
+export interface CategoryDetail {
+  category: string;
+  passed: boolean;
+  message: string;
+  details?: string[];
+}
+
+export interface Recommendation {
+  priority: number;
+  title: string;
+  description: string;
+  category: string;
+  impact: 'high' | 'medium' | 'low';
+}
+
+export interface ResultMetadata {
+  fileName?: string;
+  fileSize?: number;
+  fileType?: string;
+  wordCount?: number;
+  estimatedPages?: number;
+  processingTime?: number;
+  processedAt?: string;
+  version?: string;
 }
 
 export interface ParsedCV {
-  rawText: string;
-  normalizedText: string;
-  sections: DetectedSection[];
-  metadata: CVMetadata;
+  text: string;  // Renamed from rawText for consistency
+  rawText?: string;  // Legacy support
+  normalizedText?: string;
+  sections?: DetectedSection[];
+  metadata?: CVMetadata;
+  wordCount?: number;
 }
 
 export interface DetectedSection {

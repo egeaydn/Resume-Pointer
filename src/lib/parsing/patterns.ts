@@ -1,16 +1,6 @@
-/**
- * Keyword lists and regex patterns for CV analysis
- * Based on RFC-003: Text Parsing & Detection Rules
- */
-
 import { DetectedSection, ParsedCV } from '../scoring/types';
 
-// ============================================================================
-// TECHNICAL SKILLS KEYWORDS
-// ============================================================================
-
 export const TECHNICAL_SKILLS = {
-  // Programming Languages
   languages: [
     'javascript', 'typescript', 'python', 'java', 'c++', 'c#', 'ruby', 'go', 'rust',
     'php', 'swift', 'kotlin', 'scala', 'perl', 'r', 'matlab', 'sql', 'bash', 'shell',
@@ -18,7 +8,6 @@ export const TECHNICAL_SKILLS = {
     'assembly', 'vb.net', 'fortran', 'cobol', 'clojure', 'f#', 'erlang',
   ],
   
-  // Frontend Frameworks & Libraries
   frontend: [
     'react', 'angular', 'vue', 'svelte', 'next.js', 'nuxt', 'gatsby', 'remix',
     'ember', 'backbone', 'jquery', 'redux', 'mobx', 'recoil', 'zustand',
@@ -26,7 +15,6 @@ export const TECHNICAL_SKILLS = {
     'alpine.js', 'htmx', 'astro', 'solid.js', 'preact', 'lit', 'polymer',
   ],
   
-  // Backend Frameworks
   backend: [
     'express', 'fastapi', 'django', 'flask', 'spring', 'spring boot', 'laravel',
     'rails', 'ruby on rails', 'asp.net', 'node.js', 'nest.js', 'fastify', 'koa',
@@ -34,7 +22,6 @@ export const TECHNICAL_SKILLS = {
     'strapi', 'adonis', 'sails', 'loopback', 'hapi',
   ],
   
-  // Data Science & ML
   datascience: [
     'tensorflow', 'pytorch', 'keras', 'scikit-learn', 'pandas', 'numpy', 'scipy',
     'matplotlib', 'seaborn', 'plotly', 'jupyter', 'anaconda', 'spark', 'pyspark',
@@ -42,7 +29,6 @@ export const TECHNICAL_SKILLS = {
     'opencv', 'nltk', 'spacy', 'hugging face', 'langchain', 'xgboost', 'lightgbm',
   ],
   
-  // Cloud & DevOps Tools
   cloud: [
     'aws', 'azure', 'gcp', 'google cloud', 'heroku', 'vercel', 'netlify', 'digitalocean',
     'docker', 'kubernetes', 'k8s', 'jenkins', 'gitlab', 'github', 'bitbucket',
@@ -51,13 +37,11 @@ export const TECHNICAL_SKILLS = {
     'prometheus', 'grafana', 'datadog', 'new relic', 'splunk', 'elk stack',
   ],
   
-  // Build Tools & Bundlers
   buildtools: [
     'webpack', 'vite', 'rollup', 'parcel', 'esbuild', 'turbopack', 'babel',
     'gulp', 'grunt', 'browserify', 'swc', 'rome', 'npm', 'yarn', 'pnpm', 'bun',
   ],
   
-  // Testing Tools
   testing: [
     'jest', 'mocha', 'chai', 'jasmine', 'vitest', 'cypress', 'playwright',
     'selenium', 'puppeteer', 'testcafe', 'webdriver', 'karma', 'protractor',
@@ -65,7 +49,6 @@ export const TECHNICAL_SKILLS = {
     'enzyme', 'react testing library', 'vue test utils', 'storybook', 'chromatic',
   ],
   
-  // Databases
   databases: [
     'mysql', 'postgresql', 'postgres', 'mongodb', 'redis', 'elasticsearch',
     'cassandra', 'oracle', 'sql server', 'sqlite', 'dynamodb', 'firebase',
@@ -74,39 +57,33 @@ export const TECHNICAL_SKILLS = {
     'mongoose', 'knex', 'drizzle', 'graphql', 'apollo', 'hasura', 'postgraphile',
   ],
   
-  // API & Integration
   api: [
     'rest api', 'graphql', 'grpc', 'soap', 'websocket', 'webhooks',
     'postman', 'insomnia', 'swagger', 'openapi', 'apigateway', 'kong',
     'apollo server', 'apollo client', 'relay', 'urql', 'axios', 'fetch',
   ],
   
-  // Design & UI Tools
   design: [
     'figma', 'sketch', 'adobe xd', 'invision', 'zeplin', 'framer', 'principle',
     'photoshop', 'illustrator', 'canva', 'affinity designer', 'blender',
   ],
   
-  // Project Management & Collaboration
   projectmgmt: [
     'jira', 'confluence', 'trello', 'asana', 'monday', 'notion', 'clickup',
     'linear', 'shortcut', 'basecamp', 'slack', 'teams', 'discord', 'zoom',
   ],
   
-  // CSS Frameworks & Preprocessors
   css: [
     'tailwind', 'tailwind css', 'bootstrap', 'material ui', 'mui', 'chakra ui',
     'sass', 'scss', 'less', 'stylus', 'postcss', 'css modules', 'styled components',
     'emotion', 'bulma', 'foundation', 'semantic ui', 'ant design', 'mantine',
   ],
   
-  // Mobile Development
   mobile: [
     'react native', 'flutter', 'swift', 'swiftui', 'kotlin', 'android',
     'ios', 'xcode', 'android studio', 'expo', 'ionic', 'capacitor',
   ],
   
-  // Methodologies & Concepts
   concepts: [
     'agile', 'scrum', 'kanban', 'devops', 'ci/cd', 'tdd', 'bdd', 'ddd',
     'microservices', 'monolith', 'serverless', 'jamstack', 'headless cms',
@@ -119,7 +96,6 @@ export const TECHNICAL_SKILLS = {
     'pair programming', 'code review', 'version control', 'git flow',
   ],
   
-  // Soft Skills & Leadership
   softskills: [
     'leadership', 'team lead', 'mentoring', 'coaching', 'communication',
     'collaboration', 'problem solving', 'critical thinking', 'analytical',
@@ -128,7 +104,6 @@ export const TECHNICAL_SKILLS = {
   ],
 };
 
-// Flatten all technical skills into single array
 export const ALL_TECHNICAL_SKILLS = [
   ...TECHNICAL_SKILLS.languages,
   ...TECHNICAL_SKILLS.frontend,
@@ -146,10 +121,6 @@ export const ALL_TECHNICAL_SKILLS = [
   ...TECHNICAL_SKILLS.concepts,
   ...TECHNICAL_SKILLS.softskills,
 ];
-
-// ============================================================================
-// ACTION VERBS (for experience bullet points)
-// ============================================================================
 
 export const ACTION_VERBS = [
   // Achievement & Impact
@@ -221,10 +192,6 @@ export const ACTION_VERBS = [
   'published', 'standardized',
 ];
 
-// ============================================================================
-// SECTION DETECTION PATTERNS
-// ============================================================================
-
 export const SECTION_PATTERNS = {
   contact: /^\s*(contact|personal\s+information|personal\s+details|get\s+in\s+touch|contact\s+info|contact\s+details)\s*$/im,
   
@@ -253,20 +220,13 @@ export const SECTION_PATTERNS = {
   references: /^\s*(references|professional\s+references|references\s+available)\s*$/im,
 };
 
-// ============================================================================
-// CONTENT DETECTION PATTERNS
-// ============================================================================
 
-// Email pattern
 export const EMAIL_PATTERN = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 
-// Phone number pattern (various formats)
 export const PHONE_PATTERN = /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g;
 
-// URL pattern
 export const URL_PATTERN = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9-]+\.(com|org|net|io|dev|co)[^\s]*)/gi;
 
-// Social media patterns
 export const SOCIAL_PATTERNS = {
   linkedin: /(linkedin\.com\/in\/[a-zA-Z0-9-]+)|(linkedin\s*◇)|(linkedin\s*profile)|(linkedin\s*:)/gi,
   github: /(github\.com\/[a-zA-Z0-9-]+)|(github\s*◇)|(github\s*profile)|(github\s*:)/gi,
@@ -277,17 +237,14 @@ export const SOCIAL_PATTERNS = {
   stackoverflow: /stackoverflow\.com\/users\/\d+/gi,
 };
 
-// Date patterns (for experience/education dates)
 export const DATE_PATTERNS = {
   monthYear: /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s,.-]*\d{4}\b/gi,
   yearOnly: /\b(19|20)\d{2}\b/g,
   present: /\b(present|current|now)\b/gi,
 };
 
-// Bullet point pattern
 export const BULLET_PATTERN = /^[\s]*[•▪▸→\-\*]\s+/gm;
 
-// Quantification patterns (numbers, percentages, metrics)
 export const QUANTIFICATION_PATTERNS = {
   percentage: /\d+(\.\d+)?%/g,
   number: /\b\d{1,3}(,\d{3})*(\.\d+)?\b/g,
@@ -295,31 +252,21 @@ export const QUANTIFICATION_PATTERNS = {
   timeframe: /\d+\s+(year|month|week|day|hour)s?/gi,
 };
 
-// ============================================================================
-// SECTION DETECTION FUNCTION
-// ============================================================================
-
-/**
- * Detect and extract sections from CV text
- */
 export function detectSections(cv: ParsedCV): DetectedSection[] {
   const sections: DetectedSection[] = [];
-  const lines = cv.normalizedText.split('\n');
+  const lines = (cv.normalizedText ?? "").split('\n');
   
   let currentSection: DetectedSection | null = null;
   
   lines.forEach((line, index) => {
     const trimmedLine = line.trim();
     
-    // Check if line matches any section header
     for (const [sectionName, pattern] of Object.entries(SECTION_PATTERNS)) {
       if (pattern.test(trimmedLine)) {
-        // Save previous section if exists
         if (currentSection) {
           sections.push(currentSection);
         }
         
-        // Start new section
         currentSection = {
           name: sectionName,
           content: '',
@@ -331,14 +278,12 @@ export function detectSections(cv: ParsedCV): DetectedSection[] {
       }
     }
     
-    // Add content to current section
     if (currentSection) {
       currentSection.content += line + '\n';
       currentSection.endIndex = index;
     }
   });
   
-  // Add last section
   if (currentSection) {
     sections.push(currentSection);
   }
@@ -346,9 +291,7 @@ export function detectSections(cv: ParsedCV): DetectedSection[] {
   return sections;
 }
 
-/**
- * Count technical skills in text
- */
+
 export function countTechnicalSkills(text: string): {
   count: number;
   found: string[];

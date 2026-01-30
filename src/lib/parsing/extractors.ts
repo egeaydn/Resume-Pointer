@@ -176,12 +176,14 @@ export async function parseCV(
   // Extract metadata
   const metadata = extractMetadata(normalizedText, fileType);
   
-  // Return parsed CV (sections will be detected in pattern matching)
+  // Return parsed CV (RFC-005 compliant format with 'text' field)
   return {
-    rawText,
-    normalizedText,
-    sections: [], // Will be populated by section detector
+    text: normalizedText,  // Primary field for RFC-005
+    rawText,              // Legacy support
+    normalizedText,       // Legacy support
+    sections: [],         // Will be populated by section detector
     metadata,
+    wordCount,            // Direct field for RFC-005
   };
 }
 

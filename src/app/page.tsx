@@ -30,13 +30,21 @@ export default function Home() {
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error('⏱️ Rate limit reached. Please wait an hour before trying again.');
+        // Handle RFC-005 error format
+        if (data.error) {
+          const errorMessage = data.error.message || 'Failed to process CV';
+          const errorDetails = data.error.details ? `\n${data.error.details}` : '';
+          throw new Error(errorMessage + errorDetails);
         }
-        throw new Error(data.error || 'Failed to process CV');
+        throw new Error('Failed to process CV');
       }
 
-      setResult(data.result);
+      // Handle RFC-005 success format
+      if (data.success && data.data) {
+        setResult(data.data);
+      } else {
+        throw new Error('Invalid response format');
+      }
     } catch (err: any) {
       setError(err.message || 'An error occurred while processing your CV');
     } finally {

@@ -32,10 +32,11 @@ import {
 
 /**
  * Main scoring function - evaluates a CV and returns comprehensive results
+ * Returns RFC-005 compliant format with breakdown structure + legacy fields for backward compatibility
  */
 export function calculateScore(cv: ParsedCV): ScoreResult {
   // First, detect all sections in the CV (only if not already provided)
-  const sections = cv.sections || detectSections(cv);
+  const sections = cv.sections || detectSections(cv.text || cv.rawText || '');
   const cvWithSections = { ...cv, sections };
   
   // Calculate scores for each category
@@ -50,17 +51,46 @@ export function calculateScore(cv: ParsedCV): ScoreResult {
   // Calculate total score
   const totalScore = categoryScores.reduce((sum, cat) => sum + cat.score, 0);
   
-  // Generate overall feedback and suggestions
+  // Convert to RFC-005 breakdown format
+  const breakdown = {
+    structure: convertToCategoryResult(categoryScores[0]),
+    technicalSkills: convertToCategoryResult(categoryScores[1]),
+    workExperience: convertToCategoryResult(categoryScores[2]),
+    education: convertToCategoryResult(categoryScores[3]),
+    formatting: convertToCategoryResult(categoryScores[4]),
+  };
+  
+  // Generate legacy fields for backward compatibility (tests)
   const overallFeedback = getOverallFeedback(totalScore);
   const suggestions = generateSuggestions(categoryScores, cvWithSections);
   
   return {
     totalScore,
+    breakdown,
+    metadata: {
+      wordCount: cv.wordCount || cv.metadata?.wordCount || 0,
+    },
+    // Legacy fields for backward compatibility
     maxScore: 100,
     categoryScores,
     overallFeedback,
     suggestions,
     timestamp: Date.now(),
+  };
+}
+
+/**
+ * Convert legacy CategoryScore to RFC-005 CategoryResult format
+ */
+function convertToCategoryResult(categoryScore: CategoryScore): any {
+  return {
+    score: categoryScore.score,
+    maxScore: categoryScore.maxScore,
+    details: categoryScore.feedback.map(item => ({
+      category: item.message.split(':')[0] || 'General',
+      passed: item.type === 'success',
+      message: item.message,
+    })),
   };
 }
 
