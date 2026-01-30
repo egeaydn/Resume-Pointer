@@ -1,6 +1,8 @@
 'use client';
 
-export default function LoadingSpinner() {
+import { memo } from 'react';
+
+function LoadingSpinner() {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <div className="relative w-20 h-20">
@@ -43,3 +45,5 @@ export default function LoadingSpinner() {
     </div>
   );
 }
+
+export default memo(LoadingSpinner);

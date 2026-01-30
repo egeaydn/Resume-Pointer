@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useRef, ChangeEvent, DragEvent } from 'react';
+import { useState, useRef, memo, ChangeEvent, DragEvent } from 'react';
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
   isProcessing: boolean;
 }
 
-export default function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
+function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -152,3 +152,5 @@ export default function FileUpload({ onFileSelect, isProcessing }: FileUploadPro
     </div>
   );
 }
+
+export default memo(FileUpload);

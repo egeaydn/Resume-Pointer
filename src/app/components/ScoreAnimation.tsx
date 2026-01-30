@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
 interface ScoreAnimationProps {
   targetScore: number;
@@ -9,7 +9,7 @@ interface ScoreAnimationProps {
   label: string;
 }
 
-export default function ScoreAnimation({ targetScore, maxScore, color, label }: ScoreAnimationProps) {
+function ScoreAnimation({ targetScore, maxScore, color, label }: ScoreAnimationProps) {
   const [displayScore, setDisplayScore] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -101,3 +101,5 @@ function ConfettiEffect() {
     </div>
   );
 }
+
+export default memo(ScoreAnimation);

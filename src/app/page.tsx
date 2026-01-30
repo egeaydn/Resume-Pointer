@@ -1,70 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useFileUpload } from '@/hooks/useFileUpload';
 import FileUpload from './components/FileUpload';
-import ResultsDisplay from './components/ResultsDisplay';
 import LoadingSpinner from './components/LoadingSpinner';
+import ErrorMessage from './components/common/ErrorMessage';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { ScoreResult } from '@/lib/scoring/types';
+
+// Dynamic imports for code splitting - only load results components when needed
+const ScoreCard = dynamic(() => import('./components/results/ScoreCard'), {
+  loading: () => <LoadingSpinner />,
+});
+const Breakdown = dynamic(() => import('./components/results/Breakdown'), {
+  loading: () => <LoadingSpinner />,
+});
+const Recommendations = dynamic(() => import('./components/results/Recommendations'), {
+  loading: () => <LoadingSpinner />,
+});
 
 export default function Home() {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [result, setResult] = useState<ScoreResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleFileSelect = async (file: File) => {
-    setIsProcessing(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/score', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle RFC-005 error format
-        if (data.error) {
-          const errorMessage = data.error.message || 'Failed to process CV';
-          const errorDetails = data.error.details ? `\n${data.error.details}` : '';
-          throw new Error(errorMessage + errorDetails);
-        }
-        throw new Error('Failed to process CV');
-      }
-
-      // Handle RFC-005 success format
-      if (data.success && data.data) {
-        setResult(data.data);
-      } else {
-        throw new Error('Invalid response format');
-      }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred while processing your CV');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleReset = () => {
-    setResult(null);
-    setError(null);
-  };
+  const { status, handleFileSelect, reset, isLoading, isComplete, isError } = useFileUpload();
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
       <main className="flex-grow container mx-auto px-4 py-12">
-        {isProcessing ? (
+        {/* Loading State */}
+        {isLoading && (
           <LoadingSpinner />
-        ) : !result ? (
+        )}
+        
+        {/* Upload State */}
+        {status.state === 'idle' && (
           <div className="space-y-8">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <h1 className="text-5xl font-bold text-gray-900 mb-4">
@@ -77,14 +46,8 @@ export default function Home() {
 
             <FileUpload 
               onFileSelect={handleFileSelect} 
-              isProcessing={isProcessing} 
+              isProcessing={false} 
             />
-
-            {error && (
-              <div className="max-w-2xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
-                <p className="text-red-800">❌ {error}</p>
-              </div>
-            )}
 
             <div className="max-w-4xl mx-auto mt-12 grid md:grid-cols-4 gap-6 text-center text-sm text-gray-600">
               <div className="flex items-center justify-center gap-2">
@@ -145,8 +108,28 @@ export default function Home() {
               </div>
             </div>
           </div>
-        ) : (
-          <ResultsDisplay result={result} onReset={handleReset} />
+        )}
+        
+        {/* Error State */}
+        {isError && status.error && (
+          <div className="max-w-2xl mx-auto">
+            <ErrorMessage
+              message="Failed to analyze CV"
+              details={status.error}
+              onRetry={reset}
+            />
+          </div>
+        )}
+        
+        {/* Results State */}
+        {isComplete && status.result && status.result.breakdown && (
+          <div className="max-w-4xl mx-auto space-y-6">
+            <ScoreCard result={status.result} onReset={reset} />
+            <Breakdown breakdown={status.result.breakdown} />
+            {status.result.recommendations && (
+              <Recommendations recommendations={status.result.recommendations} />
+            )}
+          </div>
         )}
       </main>
 
