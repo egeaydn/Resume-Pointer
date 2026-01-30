@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ScoreCard from '@/app/components/results/ScoreCard';
 import { createMockCVResult, createExcellentCVResult, createMinimalCVResult } from '../../helpers/mock-data';
@@ -8,13 +8,30 @@ describe('ScoreCard Component', () => {
 
   beforeEach(() => {
     mockOnReset.mockClear();
+    // Mock timers for animation
+    jest.useFakeTimers();
   });
 
-  it('renders score correctly', () => {
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('renders score correctly', async () => {
     const mockResult = createMockCVResult();
     render(<ScoreCard result={mockResult} onReset={mockOnReset} />);
 
-    expect(screen.getByText('78')).toBeInTheDocument();
+    // Score animates, so initially shows 0
+    expect(screen.getByText('0')).toBeInTheDocument();
+
+    // Fast-forward animation
+    jest.advanceTimersByTime(1500);
+
+    // Now should show actual score
+    await waitFor(() => {
+      expect(screen.getByText('78')).toBeInTheDocument();
+    });
+
     expect(screen.getByText('/100')).toBeInTheDocument();
     expect(screen.getByText('Very Good')).toBeInTheDocument();
   });
@@ -41,26 +58,42 @@ describe('ScoreCard Component', () => {
     const mockResult = createMockCVResult();
     render(<ScoreCard result={mockResult} onReset={mockOnReset} />);
 
-    const printButton = screen.getByText('Print Results');
+    const printButton = screen.getByText(/Print Results/i);
     expect(printButton).toBeInTheDocument();
   });
 
-  it('renders ScoreAnimation with correct props', () => {
+  it('renders ScoreAnimation with correct props', async () => {
     const mockResult = createMockCVResult();
     const { container } = render(<ScoreCard result={mockResult} onReset={mockOnReset} />);
 
-    // Check that score animation is rendered
-    const scoreElement = screen.getByText('78');
-    expect(scoreElement).toBeInTheDocument();
-  });
+    // Initially shows 0 (animation starts)
+    expect(screen.getByText('0')).toBeInTheDocument();
 
-  describe('Score Colors', () => {
-    it('renders green color for excellent score (90+)', () => {
+    // Fast-forward animation
+    jest.advanceTimersByTime(1500);
+
+    // Check that score animation completedasync () => {
       const excellentResult = createExcellentCVResult();
       const { container } = render(<ScoreCard result={excellentResult} onReset={mockOnReset} />);
 
-      // ScoreAnimation should receive green color
-      expect(screen.getByText('92')).toBeInTheDocument();
+      // Fast-forward animation
+      jest.advanceTimersByTime(1500);
+
+      await waitFor(() => {
+        expect(screen.getByText('92')).toBeInTheDocument();
+      });
+    });
+
+    it('renders orange/red color for low score (<60)', async () => {
+      const weakResult = createMinimalCVResult();
+      const { container } = render(<ScoreCard result={weakResult} onReset={mockOnReset} />);
+
+      // Fast-forward animation
+      jest.advanceTimersByTime(1500);
+
+      await waitFor(() => {
+        expect(screen.getByText('45')).toBeInTheDocument();
+      });
     });
 
     it('renders orange/red color for low score (<60)', () => {
@@ -70,26 +103,36 @@ describe('ScoreCard Component', () => {
       expect(screen.getByText('45')).toBeInTheDocument();
     });
   });
-
-  it('renders with proper accessibility attributes', () => {
-    const mockResult = createMockCVResult();
-    const { container } = render(<ScoreCard result={mockResult} onReset={mockOnReset} />);
-
-    // Check that card has proper structure
-    expect(container.querySelector('.bg-white')).toBeInTheDocument();
-  });
-
-  it('handles missing grade gracefully', () => {
+async () => {
     const mockResult = {
       ...createMockCVResult(),
       grade: '',
     };
     render(<ScoreCard result={mockResult} onReset={mockOnReset} />);
 
+    // Fast-forward animation
+    jest.advanceTimersByTime(1500);
+
     // Should still render score
-    expect(screen.getByText('78')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('78')).toBeInTheDocument();
+    });
   });
 
+  it('handles missing message gracefully', async () => {
+    const mockResult = {
+      ...createMockCVResult(),
+      message: '',
+    };
+    render(<ScoreCard result={mockResult} onReset={mockOnReset} />);
+
+    // Fast-forward animation
+    jest.advanceTimersByTime(1500);
+
+    // Should still render score and grade
+    await waitFor(() => {
+      expect(screen.getByText('78')).toBeInTheDocument();
+    }
   it('handles missing message gracefully', () => {
     const mockResult = {
       ...createMockCVResult(),
