@@ -36,8 +36,9 @@ import {
  */
 export function calculateScore(cv: ParsedCV): ScoreResult {
   // First, detect all sections in the CV (only if not already provided)
-  const sections = cv.sections || detectSections(cv.text || cv.rawText || '');
-  const cvWithSections = { ...cv, sections };
+  const sections = cv.sections ?? detectSections(cv);
+  // Create a version of cv with guaranteed sections for scoring functions
+  const cvWithSections: ParsedCV & { sections: DetectedSection[] } = { ...cv, sections };
   
   // Calculate scores for each category
   const categoryScores: CategoryScore[] = [
@@ -105,7 +106,7 @@ function scoreStructure(cv: ParsedCV): CategoryScore {
   // Check for required sections (3 points each = 12 points total for 4 sections)
   const requiredSectionPoints = 3;
   REQUIRED_SECTIONS.forEach(sectionName => {
-    if (hasSectionByName(cv.sections, sectionName)) {
+    if (hasSectionByName(cv.sections!, sectionName)) {
       score += requiredSectionPoints;
       feedback.push({
         type: 'success',
@@ -122,7 +123,7 @@ function scoreStructure(cv: ParsedCV): CategoryScore {
   });
   
   // Bonus: Has professional summary (3 points)
-  if (hasSectionByName(cv.sections, 'summary')) {
+  if (hasSectionByName(cv.sections!, 'summary')) {
     score += 3;
     feedback.push({
       type: 'success',
@@ -154,7 +155,7 @@ function scoreTechnicalSkills(cv: ParsedCV): CategoryScore {
   const maxScore = SCORING_WEIGHTS.technicalSkills;
   
   // Get skills section content
-  const skillsContent = getSectionContent(cv.sections, 'skills') || cv.normalizedText;
+  const skillsContent = getSectionContent(cv.sections!, 'skills') || cv.normalizedText || '';
   
   // Count technical skills
   const { count: skillCount, found: skillsFound } = countTechnicalSkills(skillsContent);
@@ -198,7 +199,7 @@ function scoreTechnicalSkills(cv: ParsedCV): CategoryScore {
   }
   
   // Check if skills section exists
-  if (!hasSectionByName(cv.sections, 'skills')) {
+  if (!hasSectionByName(cv.sections!, 'skills')) {
     feedback.push({
       type: 'warning',
       message: 'No dedicated skills section found',
@@ -223,7 +224,7 @@ function scoreWorkExperience(cv: ParsedCV): CategoryScore {
   const maxScore = SCORING_WEIGHTS.workExperience;
   
   // Get experience section content
-  const experienceContent = getSectionContent(cv.sections, 'experience');
+  const experienceContent = getSectionContent(cv.sections!, 'experience');
   
   if (!experienceContent) {
     feedback.push({
@@ -338,7 +339,7 @@ function scoreEducation(cv: ParsedCV): CategoryScore {
   const maxScore = SCORING_WEIGHTS.education;
   
   // Check if education section exists (10 points)
-  if (hasSectionByName(cv.sections, 'education')) {
+  if (hasSectionByName(cv.sections!, 'education')) {
     score += 10;
     feedback.push({
       type: 'success',
@@ -346,7 +347,7 @@ function scoreEducation(cv: ParsedCV): CategoryScore {
       icon: '✅',
     });
     
-    const educationContent = getSectionContent(cv.sections, 'education') || '';
+    const educationContent = getSectionContent(cv.sections!, 'education') || '';
     
     // Check for degree keywords (3 points)
     const degreeKeywords = ['bachelor', 'master', 'phd', 'degree', 'diploma', 'certification'];
@@ -410,7 +411,7 @@ function scoreFormatting(cv: ParsedCV): CategoryScore {
   const maxScore = SCORING_WEIGHTS.formatting;
   
   // 1. Check word count (4 points)
-  const { wordCount } = cv.metadata;
+  const wordCount = cv.metadata?.wordCount || cv.wordCount || 0;
   if (wordCount >= 300 && wordCount <= 800) {
     score += 4;
     feedback.push({
@@ -442,7 +443,7 @@ function scoreFormatting(cv: ParsedCV): CategoryScore {
   }
   
   // 2. Enhanced contact information analysis (8 points)
-  const contactAnalysis = analyzeContactInfo(cv.normalizedText);
+  const contactAnalysis = analyzeContactInfo(cv.normalizedText || cv.text || '');
   
   if (contactAnalysis.hasEmail) {
     score += 2;
@@ -493,7 +494,7 @@ function scoreFormatting(cv: ParsedCV): CategoryScore {
   }
   
   // 3. Check page count estimation (4 points)
-  const { estimatedPageCount } = cv.metadata;
+  const estimatedPageCount = cv.metadata?.estimatedPageCount || Math.ceil(wordCount / 400);
   if (estimatedPageCount <= 2) {
     score += 4;
     feedback.push({
@@ -518,12 +519,12 @@ function scoreFormatting(cv: ParsedCV): CategoryScore {
   }
   
   // 4. Check for proper structure (4 points)
-  const hasMultipleSections = cv.sections.length >= 3;
+  const hasMultipleSections = cv.sections!.length >= 3;
   if (hasMultipleSections) {
     score += 4;
     feedback.push({
       type: 'success',
-      message: `Well-organized with ${cv.sections.length} distinct sections`,
+      message: `Well-organized with ${cv.sections!.length} distinct sections`,
       icon: '✅',
     });
   } else {

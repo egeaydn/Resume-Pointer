@@ -113,20 +113,12 @@ export function createMockCVResult(): ScoreResult {
       estimatedPages: 2,
       processingTime: 1.2,
       version: '1.0.0',
-      timestamp: new Date().toISOString(),
     },
-    // Legacy fields for backward compatibility
+    // Legacy fields for backward compatibility kept minimal
     maxScore: 100,
-    categoryScores: {
-      structure: { score: 12, maxScore: 15, details: [] },
-      technicalSkills: { score: 15, maxScore: 20, details: [] },
-      workExperience: { score: 24, maxScore: 30, details: [] },
-      education: { score: 12, maxScore: 15, details: [] },
-      formatting: { score: 15, maxScore: 20, details: [] },
-    },
     overallFeedback: 'Your CV is strong with room for improvement',
     suggestions: ['Add Professional Summary', 'Add More Technical Skills'],
-    timestamp: new Date().toISOString(),
+    timestamp: Date.now(),
   };
 }
 
@@ -189,13 +181,12 @@ export function createMinimalCVResult(): ScoreResult {
       estimatedPages: 1,
       processingTime: 0.8,
       version: '1.0.0',
-      timestamp: new Date().toISOString(),
     },
     maxScore: 100,
     categoryScores: {},
     overallFeedback: '',
     suggestions: [],
-    timestamp: new Date().toISOString(),
+    timestamp: Date.now(),
   };
 }
 
@@ -220,12 +211,12 @@ export function createExcellentCVResult(): ScoreResult {
       estimatedPages: 2,
       processingTime: 1.5,
       version: '1.0.0',
-      timestamp: new Date().toISOString(),
+
     },
     maxScore: 100,
     categoryScores: {},
     overallFeedback: '',
     suggestions: [],
-    timestamp: new Date().toISOString(),
+    timestamp: Date.now(),
   };
 }

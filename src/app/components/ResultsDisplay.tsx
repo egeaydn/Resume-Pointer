@@ -44,7 +44,7 @@ export default function ResultsDisplay({ result, onReset }: ResultsDisplayProps)
       </div>
 
       {/* Suggestions */}
-      {suggestions.length > 0 && (
+      {suggestions && suggestions.length > 0 && (
         <div className="bg-red-50 rounded-lg shadow-lg p-8 border border-red-200">
           <h3 className="text-xl font-bold text-red-900 mb-4">💡 Improvement Suggestions</h3>
           <ul className="space-y-2">
