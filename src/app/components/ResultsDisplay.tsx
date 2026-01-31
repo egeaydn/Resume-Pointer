@@ -37,9 +37,9 @@ export default function ResultsDisplay({ result, onReset }: ResultsDisplayProps)
         <h3 className="text-xl font-bold text-gray-900 mb-6">Score Breakdown</h3>
         
         <div className="space-y-6">
-          {categoryScores.map((category: CategoryScore) => (
+          {categoryScores?.map((category: CategoryScore) => (
             <CategoryCard key={category.category} category={category} />
-          ))}
+          )) || null}
         </div>
       </div>
 

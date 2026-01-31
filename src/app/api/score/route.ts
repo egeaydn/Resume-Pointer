@@ -149,10 +149,11 @@ export async function POST(request: NextRequest) {
       console.log(`[${requestId}] Validation failed: ${validation.error}`);
       
       // Determine error code based on validation error
+      const errorMessage = validation.error || 'Invalid file';
       let errorCode = 'INVALID_FILE';
-      if (validation.error.includes('size')) {
+      if (errorMessage.includes('size')) {
         errorCode = 'FILE_TOO_LARGE';
-      } else if (validation.error.includes('type') || validation.error.includes('format')) {
+      } else if (errorMessage.includes('type') || errorMessage.includes('format')) {
         errorCode = 'INVALID_FILE_TYPE';
       }
       
@@ -161,8 +162,8 @@ export async function POST(request: NextRequest) {
           success: false,
           error: {
             code: errorCode,
-            message: validation.error,
-            details: validation.error.includes('size') 
+            message: errorMessage,
+            details: errorMessage.includes('size') 
               ? `File size: ${(file.size / 1024 / 1024).toFixed(1)}MB. Maximum allowed: 5MB.`
               : `Received file type: ${file.type}. Only PDF and DOCX files are supported.`,
             suggestions: [
