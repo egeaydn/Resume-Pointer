@@ -183,7 +183,7 @@ export function createMinimalCVResult(): ScoreResult {
       version: '1.0.0',
     },
     maxScore: 100,
-    categoryScores: {},
+    categoryScores: [],
     overallFeedback: '',
     suggestions: [],
     timestamp: Date.now(),
@@ -214,7 +214,7 @@ export function createExcellentCVResult(): ScoreResult {
 
     },
     maxScore: 100,
-    categoryScores: {},
+    categoryScores: [],
     overallFeedback: '',
     suggestions: [],
     timestamp: Date.now(),
