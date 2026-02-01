@@ -20,8 +20,8 @@ export async function extractFromPDF(buffer: Buffer): Promise<string> {
   try {
     console.log('Starting PDF extraction, buffer size:', buffer.length);
     
-    // Lazy load pdf-parse to avoid loading test files on module import
-    const pdfParse = require('pdf-parse');
+    // Dynamically import pdf-parse to avoid module initialization issues
+    const pdfParse = (await import('pdf-parse')).default;
     
     const data = await pdfParse(buffer);
     console.log('PDF parsed successfully, text length:', data?.text?.length || 0);
